@@ -1,8 +1,6 @@
 import com.example.Feline;
 import com.example.Lion;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -20,8 +18,8 @@ public class LionTest {
     Feline feline;
 
     @Test
-    public void testGetKittens() {
-        Lion lion = new Lion(feline);
+    public void testGetKittens() throws Exception {
+        Lion lion = new Lion("Самец", feline);
         Mockito.when(feline.getKittens()).thenReturn(1);
         int actual = lion.getKittens();
         int expected = 1;
@@ -30,7 +28,7 @@ public class LionTest {
 
     @Test
     public void testDoesHaveManeReturnsTrue() throws Exception {
-        Lion lion = new Lion("Самец");
+        Lion lion = new Lion("Самец", feline);
         boolean actual = lion.doesHaveMane();
         boolean expected = true;
         assertEquals(expected,  actual);
@@ -38,23 +36,25 @@ public class LionTest {
 
     @Test
     public void testDoesHaveManeReturnsFalse() throws Exception {
-        Lion lion = new Lion("Самка");
+        Lion lion = new Lion("Самка", feline);
         boolean actual = lion.doesHaveMane();
         boolean expected = false;
         assertEquals(expected,  actual);
     }
 
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
     @Test
-    public void testDoesHaveManeThrowsException() throws Exception {
-        exceptionRule.expectMessage("Используйте допустимые значения пола животного - самей или самка");
-        new Lion("кто-то");
+    public void testDoesHaveManeReturnsException() {
+        try {
+            Lion lion = new Lion("кто-то", feline);
+            lion.doesHaveMane();
+        } catch (Exception exception) {
+            assertEquals("Используйте допустимые значения пола животного - самей или самка", exception.getMessage());
+        }
     }
 
     @Test
     public void testGetFood() throws Exception {
-        Lion lion = new Lion(feline);
+        Lion lion = new Lion("Самец", feline);
         Mockito.when(feline.getFood("Хищник")).thenReturn(List.of("Животные", "Птицы", "Рыба"));
         List<String> actual = lion.getFood();
         List<String> expected = List.of("Животные", "Птицы", "Рыба");
